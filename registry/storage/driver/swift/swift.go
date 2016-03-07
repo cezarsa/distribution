@@ -71,6 +71,7 @@ type Parameters struct {
 	Region              string
 	Container           string
 	Prefix              string
+	EndpointType        string
 	InsecureSkipVerify  bool
 	ChunkSize           int
 	SecretKey           string
@@ -180,6 +181,7 @@ func New(params Parameters) (*Driver, error) {
 		Domain:         params.Domain,
 		DomainId:       params.DomainID,
 		TrustId:        params.TrustID,
+		EndpointType:   swift.EndpointType(params.EndpointType),
 		Transport:      transport,
 		ConnectTimeout: 60 * time.Second,
 		Timeout:        15 * 60 * time.Second,
