@@ -329,7 +329,7 @@ func (d *driver) Reader(ctx context.Context, path string, offset int64) (io.Read
 				return nil, fmt.Errorf("Timeout expired while waiting for segments of %s to show up", path)
 			}
 			time.Sleep(waitingTime)
-			waitingTime += 2
+			waitingTime *= 2
 			continue
 		}
 
@@ -435,7 +435,7 @@ func (d *driver) Stat(ctx context.Context, path string) (storagedriver.FileInfo,
 				return nil, fmt.Errorf("Timeout expired while waiting for segments of %s to show up", path)
 			}
 			time.Sleep(waitingTime)
-			waitingTime += 2
+			waitingTime *= 2
 			continue
 		}
 
