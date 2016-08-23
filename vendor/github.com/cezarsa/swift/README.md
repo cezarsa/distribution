@@ -7,27 +7,27 @@ Language
 
 See here for package docs
 
-  http://godoc.org/github.com/ncw/swift
+  http://godoc.org/github.com/cezarsa/swift
 
-[![Build Status](https://api.travis-ci.org/ncw/swift.svg?branch=master)](https://travis-ci.org/ncw/swift) [![GoDoc](https://godoc.org/github.com/ncw/swift?status.svg)](https://godoc.org/github.com/ncw/swift) 
+[![Build Status](https://api.travis-ci.org/ncw/swift.svg?branch=master)](https://travis-ci.org/ncw/swift) [![GoDoc](https://godoc.org/github.com/cezarsa/swift?status.svg)](https://godoc.org/github.com/cezarsa/swift) 
 
 Install
 -------
 
 Use go to install the library
 
-    go get github.com/ncw/swift
+    go get github.com/cezarsa/swift
 
 Usage
 -----
 
 See here for full package docs
 
-- http://godoc.org/github.com/ncw/swift
+- http://godoc.org/github.com/cezarsa/swift
 
 Here is a short example from the docs
 
-    import "github.com/ncw/swift"
+    import "github.com/cezarsa/swift"
 
     // Create a connection
     c := swift.Connection{
@@ -106,7 +106,7 @@ Contact and support
 
 The project website is at:
 
-- https://github.com/ncw/swift
+- https://github.com/cezarsa/swift
 
 There you can file bug reports, ask for help or contribute patches.
 
@@ -137,3 +137,4 @@ Contributors
 - Stefan Majewsky <stefan.majewsky@sap.com>
 - Cezar Sa Espinola <cezarsa@gmail.com>
 - Sam Gunaratne <samgzeit@gmail.com>
+- Richard Scothern <richard.scothern@gmail.com>

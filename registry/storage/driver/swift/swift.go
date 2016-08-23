@@ -32,7 +32,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/ncw/swift"
+	"github.com/cezarsa/swift"
 
 	"github.com/docker/distribution/context"
 	storagedriver "github.com/docker/distribution/registry/storage/driver"

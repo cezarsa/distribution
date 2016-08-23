@@ -222,12 +222,12 @@
 			"Rev": "482a9fd5fa83e8c4e7817413b80f3eb8feec03ef"
 		},
 		{
-			"ImportPath": "github.com/ncw/swift",
-			"Rev": "ce444d6d47c51d4dda9202cd38f5094dd8e27e86"
+			"ImportPath": "github.com/cezarsa/swift",
+			"Rev": "b8df88748d2505d7d0fb04a3cb6fa76c7fdc414b"
 		},
 		{
-			"ImportPath": "github.com/ncw/swift/swifttest",
-			"Rev": "ce444d6d47c51d4dda9202cd38f5094dd8e27e86"
+			"ImportPath": "github.com/cezarsa/swift/swifttest",
+			"Rev": "b8df88748d2505d7d0fb04a3cb6fa76c7fdc414b"
 		},
 		{
 			"ImportPath": "github.com/spf13/cobra",

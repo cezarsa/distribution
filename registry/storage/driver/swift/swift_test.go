@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ncw/swift/swifttest"
+	"github.com/cezarsa/swift/swifttest"
 
 	"github.com/docker/distribution/context"
 	storagedriver "github.com/docker/distribution/registry/storage/driver"
