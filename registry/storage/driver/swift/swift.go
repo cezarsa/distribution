@@ -52,6 +52,11 @@ const minChunkSize = 1 << 20
 // contentType defines the Content-Type header associated with stored segments
 const contentType = "application/octet-stream"
 
+const (
+	largeObjectTypeDLO = "DLO"
+	largeObjectTypeSLO = "SLO"
+)
+
 // Parameters A struct that encapsulates all of the driver parameters after all values have been set
 type Parameters struct {
 	Username            string
@@ -73,6 +78,7 @@ type Parameters struct {
 	AccessKey           string
 	TempURLContainerKey bool
 	TempURLMethods      []string
+	LargeObjectType     string
 }
 
 // swiftInfo maps the JSON structure returned by Swift /info endpoint
@@ -106,6 +112,7 @@ type driver struct {
 	AccessKey           string
 	TempURLContainerKey bool
 	TempURLMethods      []string
+	LargeObjectType     string
 }
 
 type baseEmbed struct {
@@ -154,6 +161,13 @@ func FromParameters(parameters map[string]interface{}) (*Driver, error) {
 		return nil, fmt.Errorf("The chunksize %#v parameter should be a number that is larger than or equal to %d", params.ChunkSize, minChunkSize)
 	}
 
+	params.LargeObjectType = strings.ToUpper(params.LargeObjectType)
+	if params.LargeObjectType != "" &&
+		params.LargeObjectType != largeObjectTypeDLO &&
+		params.LargeObjectType != largeObjectTypeSLO {
+		return nil, fmt.Errorf("LargeObjectType must be either empty (automatic), %s or %s, got: %q.", largeObjectTypeDLO, largeObjectTypeSLO, params.LargeObjectType)
+	}
+
 	return New(params)
 }
 
@@ -196,12 +210,13 @@ func New(params Parameters) (*Driver, error) {
 	}
 
 	d := &driver{
-		Conn:           &ct,
-		Container:      params.Container,
-		Prefix:         params.Prefix,
-		ChunkSize:      params.ChunkSize,
-		TempURLMethods: make([]string, 0),
-		AccessKey:      params.AccessKey,
+		Conn:            &ct,
+		Container:       params.Container,
+		Prefix:          params.Prefix,
+		ChunkSize:       params.ChunkSize,
+		TempURLMethods:  make([]string, 0),
+		AccessKey:       params.AccessKey,
+		LargeObjectType: params.LargeObjectType,
 	}
 
 	info := swiftInfo{}
@@ -211,6 +226,14 @@ func New(params Parameters) (*Driver, error) {
 		if err := mapstructure.Decode(config, &info); err == nil {
 			d.TempURLContainerKey = info.Swift.Version >= "2.3.0"
 			d.TempURLMethods = info.Tempurl.Methods
+		}
+
+		if d.LargeObjectType == "" {
+			if config.SupportsSLO() {
+				d.LargeObjectType = largeObjectTypeSLO
+			} else {
+				d.LargeObjectType = largeObjectTypeDLO
+			}
 		}
 	} else {
 		d.TempURLContainerKey = params.TempURLContainerKey
@@ -327,7 +350,13 @@ func (d *driver) Writer(ctx context.Context, path string, append bool) (storaged
 		SegmentPrefix:    segmentsPath,
 		Flags:            flags,
 	}
-	out, err := d.Conn.DynamicLargeObjectCreateFile(&opts)
+
+	var out swift.LargeObjectFile
+	if d.LargeObjectType == largeObjectTypeSLO {
+		out, err = d.Conn.StaticLargeObjectCreateFile(&opts)
+	} else {
+		out, err = d.Conn.DynamicLargeObjectCreateFile(&opts)
+	}
 	if err != nil {
 		return nil, err
 	}

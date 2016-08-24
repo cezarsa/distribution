@@ -40,6 +40,7 @@ func init() {
 		accessKey          string
 		containerKey       bool
 		tempURLMethods     []string
+		largeObjectType    string
 
 		swiftServer *swifttest.SwiftServer
 		err         error
@@ -61,6 +62,7 @@ func init() {
 	accessKey = os.Getenv("SWIFT_ACCESS_KEY")
 	containerKey, _ = strconv.ParseBool(os.Getenv("SWIFT_TEMPURL_CONTAINERKEY"))
 	tempURLMethods = strings.Split(os.Getenv("SWIFT_TEMPURL_METHODS"), ",")
+	largeObjectType = os.Getenv("SWIFT_LARGE_OBJECT_TYPE")
 
 	if username == "" || password == "" || authURL == "" || container == "" {
 		if swiftServer, err = swifttest.NewSwiftServer("localhost"); err != nil {
@@ -99,6 +101,7 @@ func init() {
 			accessKey,
 			containerKey,
 			tempURLMethods,
+			largeObjectType,
 		}
 
 		return New(parameters)

@@ -243,4 +243,16 @@ disabled that feature, the configuration file can specify the following optional
     </p>
     </td>
 </tr>
+<tr>
+    <td>
+    <code>largeobjecttype</code>
+    </td>
+    <td>
+    <p>
+      Which type of large objects should be created. Possible values are "DLO"
+      and "SLO". If left empty the driver will try detecting if the server
+      supports SLO and will fallback to DLO if it doesn't.
+    </p>
+    </td>
+</tr>
 </table>
