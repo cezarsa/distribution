@@ -57,6 +57,14 @@ const (
 	largeObjectTypeSLO = "SLO"
 )
 
+const (
+	// waitAfterMoveTimeout defines the time we wait before an object returns 404 after having been moved
+	waitAfterMoveTimeout = 15 * time.Second
+
+	// waitAfterMoveWait defines the time to sleep between two retries
+	waitAfterMoveWait = 200 * time.Millisecond
+)
+
 // Parameters A struct that encapsulates all of the driver parameters after all values have been set
 type Parameters struct {
 	Username            string
@@ -466,7 +474,10 @@ func (d *driver) Move(ctx context.Context, sourcePath string, destPath string) e
 	if err == swift.ObjectNotFound {
 		return storagedriver.PathNotFoundError{Path: sourcePath}
 	}
-	return err
+	if err != nil {
+		return err
+	}
+	return d.waitObjectDelete(sourcePath)
 }
 
 // Delete recursively deletes all objects stored at "path" and its subpaths.
@@ -635,6 +646,26 @@ func (d *driver) swiftSegmentPath(path string) (string, error) {
 	}
 	path = hex.EncodeToString(checksum.Sum(append([]byte(path), random...)))
 	return strings.TrimLeft(strings.TrimRight(d.Prefix+"/segments/"+path[0:3]+"/"+path[3:], "/"), "/"), nil
+}
+
+func (d *driver) waitObjectDelete(path string) error {
+	var err error
+	timeout := time.After(waitAfterMoveTimeout)
+	for {
+		_, _, err = d.Conn.Object(d.Container, d.swiftPath(path))
+		if err != nil {
+			break
+		}
+		select {
+		case <-time.After(waitAfterMoveWait):
+		case <-timeout:
+			return fmt.Errorf("Timeout expired while waiting for object %s to disappear", path)
+		}
+	}
+	if err == swift.ObjectNotFound {
+		return nil
+	}
+	return err
 }
 
 func chunkFilenames(slice []string, maxSize int) (chunks [][]string, err error) {
